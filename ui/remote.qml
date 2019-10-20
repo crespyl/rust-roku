@@ -15,23 +15,107 @@ ApplicationWindow {
     title: "Roku Remote"
     id: window
 
-    color: "#aa000000"
+    //color: "#aa000000"
 
     RokuRemote {
         id: remote
-        //name: '<Not Connected>'
+        name: '<Not Connected>'
+    }
+
+    Action {
+        id: a_right
+        text: "Right"
+        shortcut: "Right"
+        onTriggered: remote.right()
+    }
+
+    Action {
+        id: a_left
+        text: "Left"
+        shortcut: "Left"
+        onTriggered: remote.left()
+    }
+
+    Action {
+        id: a_up
+        text: "Up"
+        shortcut: "Up"
+        onTriggered: remote.up()
+    }
+
+    Action {
+        id: a_down
+        text: "Down"
+        shortcut: "Down"
+        onTriggered: remote.down()
+    }
+
+    Action {
+        id: a_select
+        text: "Ok"
+        shortcut: "Return"
+        onTriggered: remote.select()
+    }
+
+    Action {
+        id: a_back
+        text: "Back"
+        shortcut: "Backspace"
+        onTriggered: remote.back()
+    }
+
+    Action {
+        id: a_home
+        text: "Home"
+        shortcut: "Home"
+        onTriggered: remote.home()
+    }
+
+    Action {
+        id: a_instant_replay
+        text: "Replay"
+        shortcut: "\\"
+        onTriggered: remote.instant_replay()
+    }
+
+    Action {
+        id: a_info
+        text: "Info"
+        shortcut: "i"
+        onTriggered: remote.info()
+    }
+
+    Action {
+        id: a_rev
+        text: "Rev"
+        shortcut: "<"
+        onTriggered: remote.rev()
+    }
+
+    Action {
+        id: a_play
+        text: "Play"
+        shortcut: "p"
+        onTriggered: remote.play()
+    }
+
+    Action {
+        id: a_fwd
+        text: "Fwd"
+        shortcut: ">"
+        onTriggered: remote.fwd()
     }
 
     Frame {
         id: frame
-        x: 8
-        y: 8
-        width: 384
-        height: 384
+        anchors.rightMargin: 5
+        anchors.leftMargin: 5
+        anchors.bottomMargin: 5
+        anchors.topMargin: 5
+        anchors.fill: parent
 
         ColumnLayout {
-            width: parent.width
-            height: 211
+            anchors.fill: parent
             // Declare a nested element (child of root)
             Image {
                 id: triangle
@@ -59,13 +143,6 @@ ApplicationWindow {
                 }
 
                 Text {
-                    // un-named element
-
-                    // reference element by id
-
-                    // reference root element
-                    width: root.width
-
                     color: 'white'
                     horizontalAlignment: Text.AlignHCenter
                     text: remote.name
@@ -74,101 +151,105 @@ ApplicationWindow {
 
             GridLayout {
                 id: gridLayout
-                columnSpacing: 10
-                rowSpacing: 10
-                Layout.topMargin: 20
-                flow: GridLayout.TopToBottom
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                width: 100
+                height: 100
                 Layout.fillHeight: false
-                Layout.fillWidth: false
-                Layout.rowSpan: 1
-                rows: 7
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                rows: 6
                 columns: 3
 
                 Button {
-                    text: 'Home'
-                    onClicked: remote.home()
+                    id: b_back
+                    text: a_back.text
+                    action: a_back
                     Layout.row: 0
-                    Layout.column: 2
                 }
 
                 Button {
-                    text: 'Back'
-                    onClicked: remote.back()
-                    Layout.row: 0
-                    Layout.column: 0
-                }
-
-                Button {
-                    text: 'Up'
-                    onClicked: remote.up()
+                    id: b_up
+                    text: a_up.text
+                    action: a_up
                     Layout.row: 1
                     Layout.column: 1
                 }
 
                 Button {
-                    text: 'Down'
-                    onClicked: remote.down()
+                    id: b_home
+                    text: a_home.text
+                    action: a_home
+                    Layout.row: 0
+                    Layout.column: 2
+                }
+
+                Button {
+                    id: b_left
+                    text: a_left.text
+                    action: a_left
+                    Layout.row: 2
+                    Layout.column: 0
+                }
+
+                Button {
+                    id: b_select
+                    text: a_select.text
+                    action: a_select
+
+                    Layout.row: 2
+                    Layout.column: 1
+                }
+
+                Button {
+                    id: b_right
+                    text: a_right.text
+                    action: a_right
+                    Layout.row: 2
+                    Layout.column: 2
+                }
+
+                Button {
+                    id: b_replay
+                    text: a_instant_replay.text
+                    action: a_instant_replay
+                    Layout.row: 4
+                    Layout.column: 0
+                }
+
+                Button {
+                    id: b_down
+                    text: a_down.text
+                    action: a_down
                     Layout.row: 3
                     Layout.column: 1
                 }
 
                 Button {
-                    text: 'OK'
-                    onClicked: remote.select()
-                    Layout.row: 2
-                    Layout.column: 1
-                }
-
-                Button {
-                    text: 'Left'
-                    onClicked: remote.left()
-                    Layout.row: 2
-                    Layout.column: 0
-                }
-
-                Button {
-                    text: 'Right'
-                    onClicked: remote.right()
-                    Layout.row: 2
+                    id: b_info
+                    text: qsTr("Info")
+                    Layout.row: 4
                     Layout.column: 2
+                    action: a_info
                 }
 
                 Button {
-                    text: 'Replay'
-                    onClicked: remote.instant_replay()
-                    Layout.row: 5
-                    Layout.column: 0
+                    id: b_rev
+                    text: qsTr("Rev")
+                    action: a_rev
                 }
 
                 Button {
-                    text: 'Info'
-                    onClicked: remote.info()
-                    Layout.row: 5
-                    Layout.column: 2
+                    id: b_play
+                    text: qsTr("Play")
+                    action: a_play
                 }
 
                 Button {
-                    text: 'Rev'
-                    onClicked: remote.rev()
-                    Layout.row: 6
-                    Layout.column: 0
-                }
-
-                Button {
-                    text: 'Play/Pause'
-                    onClicked: remote.play()
-                    Layout.row: 6
-                    Layout.column: 1
-                }
-
-                Button {
-                    text: 'Fwd'
-                    onClicked: remote.fwd()
-                    Layout.row: 6
-                    Layout.column: 2
+                    id: b_fwd
+                    text: qsTr("Fwd")
+                    action: a_fwd
                 }
             }
         }
     }
 }
+
+
