@@ -1,8 +1,8 @@
-use std::net::IpAddr;
 use std::collections::HashMap;
 use url::Host;
 
 #[derive(Debug)]
+#[allow(dead_code)]
 pub enum RokuKey {
     Home,
     Rev,
@@ -57,12 +57,13 @@ pub struct Roku {
     pub device_info: HashMap<String, String>,
 }
 
+#[allow(dead_code)]
 impl Roku {
     /// Create a new Roku client
     pub fn new(host: Host) -> Roku {
         let mut r = Roku {
+            host,
             http: reqwest::Client::new(),
-            host: host,
             app_list: vec![],
             device_info: HashMap::new(),
         };
@@ -72,7 +73,7 @@ impl Roku {
         r.fetch_app_list()
             .expect("failed to fetch app list during init!");
 
-        return r;
+        r
     }
 
     /// Get the friendly name of the current device
@@ -97,9 +98,9 @@ impl Roku {
     /// Get a value from the device info
     pub fn get_device_info(&self, key: &str) -> &str {
         if self.device_info.contains_key(key) {
-            return self.device_info.get(key).unwrap()
+            self.device_info.get(key).unwrap()
         } else {
-            return &"";
+            &""
         }
     }
 
@@ -143,8 +144,9 @@ fn parse_app_list(xml: &str) -> Vec<RokuApp> {
         }
     }
 
-    return list;
+    list
 }
+
 fn parse_device_info(xml: &str) -> HashMap<String, String> {
     let doc = roxmltree::Document::parse(xml).unwrap();
     let root = doc.root().first_child().unwrap();
@@ -157,5 +159,5 @@ fn parse_device_info(xml: &str) -> HashMap<String, String> {
         }
     }
 
-    return map;
+    map
 }

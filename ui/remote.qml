@@ -251,5 +251,3 @@ ApplicationWindow {
         }
     }
 }
-
-

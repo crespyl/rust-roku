@@ -8,7 +8,7 @@ pub fn find_roku_urls() -> Vec<Url> {
     request.set(MX(5));
     request.set(ST::Target(ssdp::FieldMap::new("roku:ecp").unwrap()));
 
-    return request
+    request
         .multicast()
         .expect("could not send SSDP query")
         .into_iter()
@@ -17,5 +17,5 @@ pub fn find_roku_urls() -> Vec<Url> {
                 .expect("could not read Location header from SSDP");
             Url::parse(&String::from_utf8_lossy(&loc[0]))
                 .expect("could not parse Location header URL")
-        }).collect();
+        }).collect()
 }
