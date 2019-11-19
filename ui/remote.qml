@@ -10,8 +10,8 @@ ApplicationWindow {
     flags: Qt.WA_TranslucentBackground | Qt.TransparentMode
 
     visible: true
-    width: 400
-    height: 400
+    width: 275
+    height: 300
     title: "Roku Remote"
     id: window
 
@@ -20,6 +20,20 @@ ApplicationWindow {
     RokuRemote {
         id: remote
         name: '<Not Connected>'
+        status: 'Idle'
+    }
+
+    Timer {
+        id: search_timer
+        interval: 250
+        running: false
+        repeat: true
+        onTriggered: {
+            remote.check_search()
+            if (remote.status != "Searching") {
+                search_timer.stop()
+            }
+        }
     }
 
     Action {
@@ -116,36 +130,34 @@ ApplicationWindow {
 
         ColumnLayout {
             anchors.fill: parent
-            // Declare a nested element (child of root)
-            Image {
-                id: triangle
-
-                // reference the parent
-                x: (parent.width - width) / 2
-                y: 40
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-
-                source: 'triangle_red.png'
-            }
 
             RowLayout {
                 id: rowLayout
+                Layout.minimumHeight: 45
                 Layout.rightMargin: 5
                 Layout.leftMargin: 5
                 Layout.bottomMargin: 5
                 Layout.topMargin: 5
-                spacing: 9.9
+                spacing: 10
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
 
                 Button {
                     text: 'Find Roku'
-                    onClicked: remote.find_roku()
+                    onClicked: {
+                        search_timer.start()
+                        remote.find_roku()
+                    }
+                }
+
+                BusyIndicator {
+                    running: remote.status == "Searching"
+                    visible: remote.status == "Searching"
                 }
 
                 Text {
                     color: 'white'
                     horizontalAlignment: Text.AlignHCenter
-                    text: remote.name
+                    text: remote.status == "Idle" ? remote.name : "Searching..."
                 }
             }
 
