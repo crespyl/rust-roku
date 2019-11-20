@@ -23,19 +23,6 @@ ApplicationWindow {
         status: 'Idle'
     }
 
-    Timer {
-        id: search_timer
-        interval: 250
-        running: false
-        repeat: true
-        onTriggered: {
-            remote.check_search()
-            if (remote.status != "Searching") {
-                search_timer.stop()
-            }
-        }
-    }
-
     Action {
         id: a_right
         text: "Right"
@@ -144,7 +131,6 @@ ApplicationWindow {
                 Button {
                     text: 'Find Roku'
                     onClicked: {
-                        search_timer.start()
                         remote.find_roku()
                     }
                 }

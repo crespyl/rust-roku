@@ -1,94 +1,70 @@
 use qmetaobject::*;
-use url::Url;
 use std::ffi::CStr;
 use std::thread;
-use std::sync::Arc;
-use std::sync::Mutex;
-use std::sync::atomic::AtomicBool;
-use std::sync::atomic::Ordering;
-use std::borrow::BorrowMut;
-use std::cell::{Cell, RefCell};
 
 use crate::discovery;
 use crate::roku::{Roku, RokuKey};
-
-qrc!(init_qml_resources,
-     "ui" {
-         "ui/remote.qml" as "remote.qml",
-     }
-);
 
 /// This struct is our interface with the Qt/QML environment; we use the
 /// qmetaobject macros to connect all the relevant pieces together.
 #[derive(QObject, Default)]
 pub struct RokuRemote {
     roku: Option<Roku>,
-    urls: Arc<Mutex<Vec<Url>>>,
-    query_running: Arc<AtomicBool>,
 
     base: qt_base_class!(trait QObject),
-    name: qt_property!(QString; NOTIFY name_changed),
-    status: qt_property!(QString; NOTIFY status_changed),
+    name: qt_property!(QString; NOTIFY name_changed WRITE set_name),
+    status: qt_property!(QString; NOTIFY status_changed WRITE set_status),
 
     name_changed: qt_signal!(),
     status_changed: qt_signal!(),
 
-    /// This method polls the status of the worker and if the worker is stopped,
-    /// will connect to the first found device.
-    ///
-    /// This method gets called by a Timer from the QML side, since I'm not sure
-    /// how to safely trigger a signal or event on self from a rust thread.
-    check_search: qt_method!(fn check_search(&mut self) {
-        if self.query_running.load(Ordering::Relaxed) {
-            self.status = "Searching".into();
-            self.status_changed();
-        } else {
-            self.status = "Idle".into();
-            self.status_changed();
-
-            let urls = self.urls.lock().unwrap();
-            if !urls.is_empty() {
-                let roku = Roku::new(urls[0].host().unwrap().to_owned());
-
-                println!("Connected to {}: {}",
-                         roku.get_device_info("model-name"),
-                         roku.get_friendly_name());
-
-                self.name = roku.get_friendly_name().into();
-                self.name_changed();
-
-                self.roku = Some(roku);
-            } else {
-                println!("No devices found!");
-                self.name = "<Not Connected>".into();
-                self.name_changed();
-            }
-        }
-    }),
 
     /// Kick off a background thread to search for Roku devices using SSDP
     ///
-    /// This thread will use the atomic query_running to indicate whether it's
-    /// still running or not, and will use the urls Mutex to guard access to the
-    /// list
+    /// This thread will use a queued_callback to update the main thread when
+    /// the search has finished.
     find_roku: qt_method!(fn find_roku(&mut self) {
-        self.status = "Searching".into();
-        self.status_changed();
+        self.set_status("Searching");
 
-        let _running = Arc::clone(&self.query_running);
-        let _urls = Arc::clone(&self.urls);
+        // here we use a QPointer to wrap access to self from our callback closure
+        let qptr = QPointer::from(&*self);
+
+        // we use queued_callback to create a function that can be safely called
+        // from our background thread and will still execute in the main Qt
+        // thread, ensuring that we can still access self and the relevant
+        // signals and setters
+        let search_done = queued_callback(move |roku: Option<Roku>| {
+            qptr.as_pinned().map(|self_| {
+                match roku {
+                    Some(roku) => {
+                        println!("Connected to {}: {}",
+                                 roku.get_device_info("model-name"),
+                                 roku.get_friendly_name());
+
+                        self_.borrow_mut().set_name(roku.get_friendly_name());
+                        self_.borrow_mut().roku = Some(roku);
+                    },
+                    None => {
+                        println!("No devices found!");
+                        self_.borrow_mut().set_name("<Not Connected>");
+                    }
+                }
+
+                self_.borrow_mut().set_status("Idle");
+            });
+        });
+
         thread::spawn(move || {
-            _running.store(true, Ordering::Relaxed);
-
             // this is a slow blocking call, since we have to wait for some time
             // so devices have a chance to respond
-            let mut found = discovery::find_roku_urls();
+            let found = discovery::find_roku_urls();
 
-            let mut urls = _urls.lock().unwrap();
-            urls.clear();
-            urls.append(&mut found);
-
-            _running.store(false, Ordering::Relaxed)
+            if !found.is_empty() {
+                let roku = Roku::new(found[0].host().unwrap().to_owned());
+                search_done(Some(roku));
+            } else {
+                search_done(None);
+            }
         });
     }),
 
@@ -212,6 +188,26 @@ pub struct RokuRemote {
         }
     }),
 }
+
+impl RokuRemote {
+    /// Property setter for name, will trigger the name_changed signal
+    fn set_name<T: Into<QString>>(&mut self, name: T) {
+        self.name = name.into();
+        self.name_changed();
+    }
+
+    /// Property setter for status, will trigger the status_changed signal
+    fn set_status<T: Into<QString>>(&mut self, status: T) {
+        self.status = status.into();
+        self.status_changed();
+    }
+}
+
+qrc!(init_qml_resources,
+     "ui" {
+         "ui/remote.qml" as "remote.qml",
+     }
+);
 
 /// This function initializes the qrc resources (QML files, images, etc) and
 /// registers our RokuRemote type so that we can call its methods from QML.
