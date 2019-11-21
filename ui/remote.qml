@@ -11,7 +11,11 @@ ApplicationWindow {
 
     visible: true
     width: 275
-    height: 300
+    height: 330
+    minimumWidth: 275
+    maximumWidth: 275
+    minimumHeight: 330
+    maximumHeight: 330
     title: "Roku Remote"
     id: window
 
@@ -107,6 +111,24 @@ ApplicationWindow {
         onTriggered: remote.fwd()
     }
 
+    Action {
+        id: a_netflix
+        text: "Netflix"
+        onTriggered: remote.launch_netflix()
+    }
+
+    Action {
+        id: a_youtube
+        text: "Youtube"
+        onTriggered: remote.launch_youtube()
+    }
+
+    Action {
+        id: a_twitch
+        text: "Twitch"
+        onTriggered: remote.launch_twitch()
+    }
+
     Frame {
         id: frame
         anchors.rightMargin: 5
@@ -116,10 +138,18 @@ ApplicationWindow {
         anchors.fill: parent
 
         ColumnLayout {
-            anchors.fill: parent
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 0
+            anchors.rightMargin: 0
+            anchors.leftMargin: 0
+            anchors.topMargin: 0
+            anchors.right: parent.right
+            anchors.left: parent.left
+            anchors.top: parent.top
 
             RowLayout {
                 id: rowLayout
+                Layout.fillWidth: true
                 Layout.minimumHeight: 45
                 Layout.rightMargin: 5
                 Layout.leftMargin: 5
@@ -151,8 +181,10 @@ ApplicationWindow {
                 id: gridLayout
                 width: 100
                 height: 100
-                Layout.fillHeight: false
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                Layout.fillWidth: true
+                transformOrigin: Item.Center
+                Layout.fillHeight: true
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
                 rows: 6
                 columns: 3
 
@@ -244,6 +276,32 @@ ApplicationWindow {
                     id: b_fwd
                     text: qsTr("Fwd")
                     action: a_fwd
+                }
+            }
+
+            RowLayout {
+                id: channelButtons
+                width: 100
+                height: 100
+                Layout.bottomMargin: 5
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+
+                Button {
+                    id: b_netflix
+                    text: a_netflix.text
+                    action: a_netflix
+                }
+
+                Button {
+                    id: b_youtube
+                    text: a_youtube.text
+                    action: a_youtube
+                }
+
+                Button {
+                    id: b_twitch
+                    text: a_twitch.text
+                    action: a_twitch
                 }
             }
         }

@@ -41,6 +41,8 @@ pub struct RokuRemote {
                                  roku.get_device_info("model-name"),
                                  roku.get_friendly_name());
 
+                        println!("App List:\n{:#?}", roku.app_list);
+
                         self_.borrow_mut().set_name(roku.get_friendly_name());
                         self_.borrow_mut().roku = Some(roku);
                     },
@@ -66,6 +68,36 @@ pub struct RokuRemote {
                 search_done(None);
             }
         });
+    }),
+
+    launch_netflix: qt_method!(fn launch_netflix(&mut self) {
+        if self.roku.is_some() {
+            self.roku
+                .as_mut()
+                .unwrap()
+                .launch_app(12)
+                .expect("err launching app")
+        }
+    }),
+
+    launch_youtube: qt_method!(fn launch_youtube(&mut self) {
+        if self.roku.is_some() {
+            self.roku
+                .as_mut()
+                .unwrap()
+                .launch_app(837)
+                .expect("err launching app")
+        }
+    }),
+
+    launch_twitch: qt_method!(fn launch_twitch(&mut self) {
+        if self.roku.is_some() {
+            self.roku
+                .as_mut()
+                .unwrap()
+                .launch_app(50539)
+                .expect("err launching app")
+        }
     }),
 
     home: qt_method!(fn home(&mut self) {

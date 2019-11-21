@@ -43,6 +43,12 @@ impl RokuKey {
     }
 }
 
+impl Default for RokuKey {
+    fn default() -> Self {
+        RokuKey::Select
+    }
+}
+
 #[derive(Debug)]
 pub struct RokuApp {
     pub id: usize,
