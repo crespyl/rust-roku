@@ -12,8 +12,13 @@ ApplicationWindow {
     visible: true
     title: "Roku Remote"
     id: window
-    width: frame.width
-    height: frame.height
+    width: frame.width+frame.padding*2
+    height: frame.height+frame.padding*2
+
+    maximumWidth: frame.width+frame.padding*2
+    minimumWidth: frame.width+frame.padding*2
+    maximumHeight: frame.height+frame.padding*2
+    minimumHeight: frame.height+frame.padding*2
 
     //color: "#aa000000"
 
@@ -127,9 +132,12 @@ ApplicationWindow {
 
     Frame {
         id: frame
+        x: padding
+        y: padding
         width: contentWidth+padding*2
-        height: contentHeight + padding*2
-        padding: 10
+        height: contentHeight + padding
+        transformOrigin: Item.Center
+        padding: 5
 
         ColumnLayout {
             id: l_mainColumn
