@@ -10,14 +10,10 @@ ApplicationWindow {
     flags: Qt.WA_TranslucentBackground | Qt.TransparentMode
 
     visible: true
-    width: 275
-    height: 330
-    minimumWidth: 275
-    maximumWidth: 275
-    minimumHeight: 330
-    maximumHeight: 330
     title: "Roku Remote"
     id: window
+    width: frame.width
+    height: frame.height
 
     //color: "#aa000000"
 
@@ -131,21 +127,12 @@ ApplicationWindow {
 
     Frame {
         id: frame
-        anchors.rightMargin: 5
-        anchors.leftMargin: 5
-        anchors.bottomMargin: 5
-        anchors.topMargin: 5
-        anchors.fill: parent
+        width: contentWidth+padding*2
+        height: contentHeight + padding*2
+        padding: 10
 
         ColumnLayout {
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 0
-            anchors.rightMargin: 0
-            anchors.leftMargin: 0
-            anchors.topMargin: 0
-            anchors.right: parent.right
-            anchors.left: parent.left
-            anchors.top: parent.top
+            id: l_mainColumn
 
             RowLayout {
                 id: rowLayout
@@ -283,6 +270,7 @@ ApplicationWindow {
                 id: channelButtons
                 width: 100
                 height: 100
+                Layout.topMargin: 10
                 Layout.bottomMargin: 5
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
 
