@@ -49,7 +49,7 @@ impl Default for RokuKey {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct RokuApp {
     pub id: usize,
     pub name: String,

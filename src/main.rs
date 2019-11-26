@@ -1,4 +1,5 @@
 extern crate url;
+extern crate rand;
 extern crate ssdp;
 extern crate reqwest;
 extern crate roxmltree;
@@ -15,6 +16,8 @@ mod discovery;
 qrc!(init_qml_resources,
      "ui" {
          "ui/remote.qml" as "remote.qml",
+         "ui/RemoteTab.qml" as "RemoteTab.qml",
+         "ui/ChannelTab.qml" as "ChannelTab.qml",
      }
 );
 
