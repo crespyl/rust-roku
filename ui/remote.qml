@@ -20,10 +20,6 @@ ApplicationWindow {
         id: remote
         name: '<Not Connected>'
         status: 'Idle'
-
-        onCountChanged: {
-            console.log("got "+count+" channels")
-        }
     }
 
     Frame {

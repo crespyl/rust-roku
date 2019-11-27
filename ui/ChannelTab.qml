@@ -11,9 +11,26 @@ ColumnLayout {
         y: 0
         width: 110
         height: 160
-        Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+        highlightRangeMode: ListView.ApplyRange
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+        keyNavigationWraps: true
+        spacing: 5
+        Layout.alignment: Qt.AlignHLeft | Qt.AlignVCenter
+
+        ScrollBar.vertical: ScrollBar {
+            active: true
+        }
 
         model: remote
+        /* model: ListModel { */
+        /*     // TODO load this dynamically from the RokuRemote */
+        /*     Component.onCompleted: { */
+        /*         append({"name": "Netflix", "colorCode": "red", "appId": 12}) */
+        /*         append({"name": "YouTube", "colorCode": "purple", "appId": 837}) */
+        /*         append({"name": "Twitch", "colorCode": "red", "appId": 50539}) */
+        /*     } */
+        /* } */
 
         delegate: Item {
             x: 5
@@ -38,3 +55,9 @@ ColumnLayout {
         }
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;autoSize:true;height:480;width:640}
+}
+##^##*/
