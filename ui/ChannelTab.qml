@@ -24,7 +24,6 @@ ColumnLayout {
 
         model: remote
         /* model: ListModel { */
-        /*     // TODO load this dynamically from the RokuRemote */
         /*     Component.onCompleted: { */
         /*         append({"name": "Netflix", "colorCode": "red", "appId": 12}) */
         /*         append({"name": "YouTube", "colorCode": "purple", "appId": 837}) */

@@ -11,3 +11,11 @@ roxmltree = "0.7"
 ssdp = "0.7"
 qmetaobject = "0.1"
 rand = "0.7"
+
+[lib]
+crate-type = ["dylib"]
+path = "src/main.rs"
+
+[[bin]]
+name = "rust-roku"
+path = "src/main.rs"

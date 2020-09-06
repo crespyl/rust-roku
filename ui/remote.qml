@@ -55,14 +55,14 @@ ApplicationWindow {
                 }
 
                 BusyIndicator {
-                    running: remote.status == "Searching"
-                    visible: remote.status == "Searching"
+                    running: remote.status === "Searching"
+                    visible: remote.status === "Searching"
                 }
 
                 Text {
                     color: 'white'
                     horizontalAlignment: Text.AlignHCenter
-                    text: remote.status == "Idle" ? remote.name : qsTr("Searching...")
+                    text: remote.status === "Idle" ? remote.name : qsTr("Searching...")
                 }
             }
 

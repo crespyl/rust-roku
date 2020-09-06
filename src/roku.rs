@@ -1,3 +1,4 @@
+use std::thread;
 use std::collections::HashMap;
 use url::Host;
 
@@ -90,14 +91,18 @@ impl Roku {
     /// Send a keypress event
     pub fn keypress(&mut self, key: RokuKey) -> Result<(), Box<reqwest::Error>>{
         let url = format!("http://{}:8060/keypress/{}", self.host, key.to_str());
-        self.http.post(&url).send()?;
+        thread::spawn(move || {
+            reqwest::Client::new().post(&url.clone()).send();
+        });
         Ok(())
     }
 
     /// Launch a specific app
     pub fn launch_app(&self, app_id: usize) -> Result<(), Box<reqwest::Error>> {
         let url = format!("http://{}:8060/launch/{}", self.host, app_id);
-        self.http.post(&url).send()?;
+        thread::spawn(move || {
+            reqwest::Client::new().post(&url.clone()).send();
+        });
         Ok(())
     }
 
@@ -123,7 +128,7 @@ impl Roku {
 
     /// Query device info
     fn fetch_device_info(&mut self) -> Result<(), Box<reqwest::Error>> {
-        let url = format!("http://{}:8060/query/device-info", self.host);
+        let url = format!("http://{}:8060/query/device-info", self.host);       
         let body = self.http.get(&url).send()?
             .text()
             .expect("could not get device info response");

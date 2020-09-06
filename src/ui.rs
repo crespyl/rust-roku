@@ -84,24 +84,20 @@ impl RokuRemote {
         // signals and setters
         let search_done = queued_callback(move |roku: Option<Roku>| {
             qptr.as_pinned().map(|self_| {
-                match roku {
-                    Some(roku) => {
-                        println!("Connected to {}: {}",
-                                 roku.get_device_info("model-name"),
-                                 roku.get_friendly_name());
+                if let Some(roku) = roku {
+                    println!("Connected to {}: {}",
+                             roku.get_device_info("model-name"),
+                             roku.get_friendly_name());
 
+                    self_.borrow_mut().set_name(roku.get_friendly_name());
+                    self_.borrow_mut().set_apps(&roku.app_list);
 
-                        self_.borrow_mut().set_name(roku.get_friendly_name());
-                        self_.borrow_mut().set_apps(&roku.app_list);
+                    println!("App List:\n{:#?}", self_.borrow().apps);
 
-                        println!("App List:\n{:#?}", self_.borrow().apps);
-
-                        self_.borrow_mut().roku = Some(roku);
-                    },
-                    None => {
-                        println!("No devices found!");
-                        self_.borrow_mut().set_name("<Not Connected>");
-                    }
+                    self_.borrow_mut().roku = Some(roku);
+                } else {
+                    println!("No devices found!");
+                    self_.borrow_mut().set_name("<Not Connected>");
                 }
 
                 self_.borrow_mut().set_status("Idle");
